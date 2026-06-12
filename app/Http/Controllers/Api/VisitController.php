@@ -12,7 +12,7 @@ class VisitController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'medical_record_number' => 'required'
+            'medical_record_number' => 'required|string'
         ]);
 
         $patient = Patient::where(
@@ -22,24 +22,25 @@ class VisitController extends Controller
 
         if (!$patient) {
             return response()->json([
-                'message' => 'Patient not found'
+                'message' => 'Patient not found',
+                'received' => $request->medical_record_number
             ], 404);
         }
 
-        Visit::create([
+        $visit = Visit::create([
             'patient_id' => $patient->id,
             'visit_date' => now(),
         ]);
 
-        $totalVisits = $patient->visits()->count();
-
         return response()->json([
             'message' => 'Visit created successfully',
+            'visit' => $visit,
             'patient' => [
+                'id' => $patient->id,
                 'name' => $patient->name,
                 'medical_record_number' => $patient->medical_record_number,
             ],
-            'total_visits' => $totalVisits,
-        ]);
+            'total_visits' => $patient->visits()->count(),
+        ], 201);
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\VisitController;
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/patients', [PatientController::class, 'index']);
     Route::post('/patients', [PatientController::class, 'store']);
     Route::get('/patients/{medicalRecordNumber}', [PatientController::class, 'show']);
     Route::post('/visits', [VisitController::class, 'store']);
